@@ -81,21 +81,26 @@ curl -I http://127.0.0.1:8085/
 
 > 若存在旧容器，请先确认它不再使用，然后执行 `docker rm -f minio-test-web`，再运行本节的启动命令。
 
-## 5. Nginx 代理
+## 5. Nginx Docker 代理
 
-Nginx 只代理测试页面，不代理 MinIO 的 `9000` 或 Console 的 `9001`：
+Nginx 同样以 Docker 容器运行，配置文件在宿主机 `/docker/nginx/conf.d/minio-test-web.conf`，并只代理测试页面，不代理 MinIO 的 `9000` 或 Console 的 `9001`。
+
+创建配置目录和配置文件：
+
+```bash
+mkdir -p /docker/nginx/conf.d
+```
+
+`/docker/nginx/conf.d/minio-test-web.conf`：
 
 ```nginx
 server {
-    listen 443 ssl http2;
-    server_name minio-test.example.com;
-
-    ssl_certificate     /etc/nginx/certs/minio-test.example.com.crt;
-    ssl_certificate_key /etc/nginx/certs/minio-test.example.com.key;
+    listen 80 default_server;
+    server_name _;
     client_max_body_size 100m;
 
     location / {
-        proxy_pass http://127.0.0.1:8085;
+        proxy_pass http://minio-test-web:8085;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -108,12 +113,31 @@ server {
 }
 ```
 
-应用配置：
+先校验配置，再启动容器：
 
 ```bash
-nginx -t
-systemctl reload nginx
+docker pull nginx:alpine
+docker run --rm \
+  --network minio-test-web-net \
+  -v /docker/nginx/conf.d:/etc/nginx/conf.d:ro \
+  nginx:alpine nginx -t
+
+docker run -d \
+  --name minio-test-nginx \
+  --restart unless-stopped \
+  --network minio-test-web-net \
+  -p 80:80 \
+  -v /docker/nginx/conf.d:/etc/nginx/conf.d:ro \
+  nginx:alpine
 ```
+
+访问地址为 `http://192.168.31.129/`。验证：
+
+```bash
+curl -I http://127.0.0.1/
+```
+
+预期返回 `HTTP/1.1 200 OK`。
 
 ## 6. 页面中的 MinIO 连接参数
 
@@ -135,7 +159,7 @@ systemctl reload nginx
 
 | 端口 | 建议来源 | 用途 |
 | --- | --- | --- |
-| 443/TCP | 被授权测试人员网段 | Nginx 测试页面 |
+| 80/TCP | 被授权测试人员网段 | Nginx 测试页面 |
 | 8085/TCP | 仅 `127.0.0.1` | 测试容器；通过 Docker 端口绑定实现 |
 | 9000/TCP | 本机 Docker 网桥或必要内网来源 | MinIO S3 API |
 | 9001/TCP | 仅管理员网段 | MinIO Console |
