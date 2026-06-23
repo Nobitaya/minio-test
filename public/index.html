@@ -29,6 +29,13 @@
 
         <form id="connection-form" class="connection-form">
           <label>
+            <span>连接方式</span>
+            <select id="connection-mode" name="CONNECTION_MODE">
+              <option value="proxy">服务端代理（Docker / 内网）</option>
+              <option value="direct">浏览器直连（Netlify / HTTPS MinIO）</option>
+            </select>
+          </label>
+          <label>
             <span>MinIO API 地址</span>
             <input id="minio-endpoint" name="MINIO_ENDPOINT" type="url" value="http://192.168.31.129:9000" required />
           </label>
@@ -46,6 +53,7 @@
           </label>
           <button id="connect-button" class="button button--primary" type="submit">连接 MinIO</button>
         </form>
+        <p id="connection-mode-hint" class="connection-mode-hint" aria-live="polite"></p>
         <p id="connection-status" class="connection-status" aria-live="polite">参数只保存在当前服务内存中，重启或一小时后自动失效。</p>
       </section>
 
@@ -117,6 +125,7 @@
 
     <script src="/media.js"></script>
     <script src="/upload-queue.js"></script>
+    <script>window.__MINIO_TEST_HAS_PROXY_API__ = '__MINIO_TEST_PROXY_TARGET__';</script>
     <script src="/app.js"></script>
   </body>
 </html>

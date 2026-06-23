@@ -25,3 +25,11 @@ test('loads converters locally and has a fallback preview message', () => {
   assert.match(appJs, /\/vendor\/utif2\/UTIF\.js/);
   assert.match(appJs, /当前浏览器无法预览此文件/);
 });
+
+test('offers proxy and direct connection modes', () => {
+  assert.match(indexHtml, /id="connection-mode"/);
+  assert.match(indexHtml, /value="proxy"/);
+  assert.match(indexHtml, /value="direct"/);
+  assert.match(appJs, /selectAdapter/);
+  assert.match(appJs, /clearSensitiveConnectionFields/);
+});

@@ -4,7 +4,8 @@
   "private": true,
   "description": "Standalone MinIO upload and file browser for intranet testing",
   "scripts": {
-    "start": "node src/server.js",
+    "build": "node scripts/build.mjs",
+    "start": "npm run build -- --target proxy && node src/server.js",
     "test": "node --test test/*.test.js"
   },
   "engines": {
@@ -16,5 +17,10 @@
     "minio": "8.0.5",
     "multer": "2.0.1",
     "utif2": "4.1.0"
+  },
+  "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1075.0",
+    "@aws-sdk/s3-request-presigner": "^3.1075.0",
+    "esbuild": "^0.28.1"
   }
 }

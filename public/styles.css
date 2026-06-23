@@ -32,10 +32,11 @@ h2 { font-size: 1.2rem; }
 
 .connection-form { display: grid; grid-template-columns: 1.35fr 0.75fr 1fr 1fr auto; gap: 12px; align-items: end; }
 .connection-form label { display: grid; gap: 6px; color: #536079; font-size: 0.78rem; font-weight: 700; }
-.connection-form input { width: 100%; border: 1px solid #cbd5e5; border-radius: 9px; padding: 10px; color: #1c2434; background: #fff; font: inherit; }
-.connection-form input:focus { outline: 3px solid #dce7ff; border-color: #306cff; }
+.connection-form input, .connection-form select { width: 100%; border: 1px solid #cbd5e5; border-radius: 9px; padding: 10px; color: #1c2434; background: #fff; font: inherit; }
+.connection-form input:focus, .connection-form select:focus { outline: 3px solid #dce7ff; border-color: #306cff; }
 .connection-form .button { min-height: 40px; white-space: nowrap; }
 .connection-status { margin: 12px 0 0; color: #657089; font-size: 0.82rem; }
+.connection-mode-hint { margin: 12px 0 0; color: #536079; font-size: 0.82rem; line-height: 1.5; }
 
 .drop-zone { display: flex; min-height: 220px; padding: 28px; border: 1.5px dashed #aebad0; border-radius: 16px; align-items: center; justify-content: center; flex-direction: column; gap: 9px; color: #657089; cursor: pointer; text-align: center; transition: 150ms ease; }
 .drop-zone:hover, .drop-zone--active { border-color: #306cff; background: #f2f6ff; color: #2458d1; }

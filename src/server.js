@@ -210,13 +210,7 @@ function createApp({
     }
   });
 
-  const nodeModules = path.join(__dirname, '..', 'node_modules');
-  const vendorOptions = { fallthrough: false, immutable: true, maxAge: '1h' };
-
-  app.use('/vendor/heic2any', express.static(path.join(nodeModules, 'heic2any', 'dist'), vendorOptions));
-  app.use('/vendor/utif2', express.static(path.join(nodeModules, 'utif2'), vendorOptions));
-  app.use('/vendor/pako', express.static(path.join(nodeModules, 'pako', 'dist'), vendorOptions));
-  app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use(express.static(path.join(__dirname, '..', 'dist')));
 
   app.use((error, req, res, next) => {
     if (res.headersSent) {

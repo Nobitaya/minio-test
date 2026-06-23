@@ -1,12 +1,24 @@
+FROM node:22-alpine AS builder
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci
+
+COPY src ./src
+COPY public ./public
+COPY scripts ./scripts
+RUN npm run build -- --target proxy
+
 FROM node:22-alpine
 
 WORKDIR /app
 
-COPY package.json ./
-RUN npm install --omit=dev
+COPY package.json package-lock.json ./
+RUN npm ci --omit=dev
 
 COPY src ./src
-COPY public ./public
+COPY --from=builder /app/dist ./dist
 
 ENV NODE_ENV=production
 ENV PORT=8085
