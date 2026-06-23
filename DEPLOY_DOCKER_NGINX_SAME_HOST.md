@@ -34,13 +34,13 @@ MinIO
 在 MinIO 所在服务器执行：
 
 ```bash
-sudo mkdir -p /opt/minio-test-web
-sudo chown "$USER":"$USER" /opt/minio-test-web
-git clone https://github.com/Nobitaya/minio-test.git /opt/minio-test-web
-cd /opt/minio-test-web
+sudo mkdir -p /docker/minio-test-web
+sudo chown "$USER":"$USER" /docker/minio-test-web
+git clone https://github.com/Nobitaya/minio-test.git /docker/minio-test-web
+cd /docker/minio-test-web
 ```
 
-如果服务器无法访问 GitHub，可在有网络的机器下载或克隆后，将整个项目目录复制到 `/opt/minio-test-web`。
+如果服务器无法访问 GitHub，可在有网络的机器下载或克隆后，将整个项目目录复制到 `/docker/minio-test-web`。
 
 ### 方式 B：服务器不能访问 GitHub（推荐）
 
@@ -54,13 +54,13 @@ git archive --format=zip --prefix=minio-test-web/ --output ..\minio-test-web-dep
 将 `minio-test-web-deploy.zip` 通过 SCP、SFTP、U 盘或企业文件传输工具复制到目标服务器，再执行：
 
 ```bash
-sudo mkdir -p /opt/minio-test-web
-sudo unzip /tmp/minio-test-web-deploy.zip -d /opt
-sudo chown -R "$USER":"$USER" /opt/minio-test-web
-cd /opt/minio-test-web
+sudo mkdir -p /docker/minio-test-web
+sudo unzip /tmp/minio-test-web-deploy.zip -d /docker
+sudo chown -R "$USER":"$USER" /docker/minio-test-web
+cd /docker/minio-test-web
 ```
 
-解压后目录应为 `/opt/minio-test-web`，可以继续执行第 3 节和第 4 节。
+解压后目录应为 `/docker/minio-test-web`，可以继续执行第 3 节和第 4 节。
 
 > 源码部署包不包含 `node_modules`、Docker 镜像和任何账号密钥。目标服务器虽然不需要访问 GitHub，但 `docker compose up -d --build` 仍需能访问 Docker Hub（拉取 `node:22-alpine`）和 npm Registry（执行 `npm ci`）。
 
@@ -84,7 +84,7 @@ docker load -i /tmp/minio-test-web-image-1.0.0.tar
 
 ## 3. 仅监听本机 8085
 
-编辑 `/opt/minio-test-web/docker-compose.yml`，将 `ports` 中的这一行：
+编辑 `/docker/minio-test-web/docker-compose.yml`，将 `ports` 中的这一行：
 
 ```yaml
 - "${WEB_PORT:-8085}:8085"
@@ -105,7 +105,7 @@ docker load -i /tmp/minio-test-web-image-1.0.0.tar
 在项目目录执行：
 
 ```bash
-cd /opt/minio-test-web
+cd /docker/minio-test-web
 docker compose config
 docker compose up -d --build
 docker compose ps
@@ -116,7 +116,7 @@ curl -I http://127.0.0.1:8085/
 最后一条命令应返回 `HTTP/1.1 200 OK`。常用运维命令：
 
 ```bash
-cd /opt/minio-test-web
+cd /docker/minio-test-web
 docker compose logs -f minio-test-web
 docker compose restart minio-test-web
 docker compose down

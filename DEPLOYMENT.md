@@ -47,10 +47,10 @@ mc admin policy attach local-minio test-web-policy --user test-web
 
 ### 2.1 部署
 
-在测试服务器上安装 Docker Engine 和 Docker Compose v2，然后将整个项目目录复制到例如 `/opt/minio-test-web`：
+在测试服务器上安装 Docker Engine 和 Docker Compose v2，然后将整个项目目录复制到例如 `/docker/minio-test-web`：
 
 ```bash
-cd /opt/minio-test-web
+cd /docker/minio-test-web
 docker compose -f docker-compose.yml config
 docker compose up -d --build
 docker compose ps
@@ -70,7 +70,7 @@ docker compose logs --tail=100 minio-test-web
 ### 2.2 运维命令
 
 ```bash
-cd /opt/minio-test-web
+cd /docker/minio-test-web
 docker compose logs -f minio-test-web
 docker compose restart minio-test-web
 docker compose stop
