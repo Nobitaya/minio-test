@@ -29,6 +29,8 @@ MinIO
 
 ## 2. 获取并放置项目
 
+### 方式 A：服务器可访问 GitHub
+
 在 MinIO 所在服务器执行：
 
 ```bash
@@ -39,6 +41,46 @@ cd /opt/minio-test-web
 ```
 
 如果服务器无法访问 GitHub，可在有网络的机器下载或克隆后，将整个项目目录复制到 `/opt/minio-test-web`。
+
+### 方式 B：服务器不能访问 GitHub（推荐）
+
+在可访问本仓库的本地电脑执行，生成源码部署包：
+
+```powershell
+cd <minio-test-web 项目目录>
+git archive --format=zip --prefix=minio-test-web/ --output ..\minio-test-web-deploy.zip HEAD
+```
+
+将 `minio-test-web-deploy.zip` 通过 SCP、SFTP、U 盘或企业文件传输工具复制到目标服务器，再执行：
+
+```bash
+sudo mkdir -p /opt/minio-test-web
+sudo unzip /tmp/minio-test-web-deploy.zip -d /opt
+sudo chown -R "$USER":"$USER" /opt/minio-test-web
+cd /opt/minio-test-web
+```
+
+解压后目录应为 `/opt/minio-test-web`，可以继续执行第 3 节和第 4 节。
+
+> 源码部署包不包含 `node_modules`、Docker 镜像和任何账号密钥。目标服务器虽然不需要访问 GitHub，但 `docker compose up -d --build` 仍需能访问 Docker Hub（拉取 `node:22-alpine`）和 npm Registry（执行 `npm ci`）。
+
+### 完全离线服务器
+
+如果目标服务器同时不能访问 Docker Hub 和 npm Registry，请在一台具备 Docker 和外网访问能力的电脑预构建镜像：
+
+```bash
+cd minio-test-web
+docker build -t minio-test-web:1.0.0 .
+docker save -o minio-test-web-image-1.0.0.tar minio-test-web:1.0.0
+```
+
+把源码包和 `minio-test-web-image-1.0.0.tar` 一并传到服务器。服务器加载镜像：
+
+```bash
+docker load -i /tmp/minio-test-web-image-1.0.0.tar
+```
+
+然后将 `docker-compose.yml` 中的 `build:` 配置替换为 `image: minio-test-web:1.0.0`，再执行 `docker compose up -d`。离线镜像需要在 Linux Docker 环境中构建；Windows/Mac 环境请确保构建目标为 `linux/amd64`（与目标服务器架构一致）。
 
 ## 3. 仅监听本机 8085
 
@@ -171,4 +213,3 @@ http://域名:9000/minio
 | 页面能打开但连接 MinIO 失败 | 在容器内检查到 `192.168.31.129:9000` 的网络和防火墙；确认桶、受限账号与策略 |
 | 连接时填 `127.0.0.1:9000` 失败 | 改用服务器 IP，或将两个容器加入同一 Docker 网络后使用 `http://minio:9000` |
 | 出现 `/minio` 或签名错误 | 移除 MinIO API 地址中的 `/minio`；S3 API 使用根路径 |
-
