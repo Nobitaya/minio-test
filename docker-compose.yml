@@ -1,0 +1,10 @@
+name: minio-test-web
+
+services:
+  minio-test-web:
+    build:
+      context: .
+    container_name: minio-test-web
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-8085}:8085"

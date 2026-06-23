@@ -1,0 +1,20 @@
+{
+  "name": "minio-test-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Standalone MinIO upload and file browser for intranet testing",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "5.1.0",
+    "heic2any": "0.0.4",
+    "minio": "8.0.5",
+    "multer": "2.0.1",
+    "utif2": "4.1.0"
+  }
+}

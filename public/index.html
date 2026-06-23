@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light" />
+    <title>MinIO 文件测试台</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="hero">
+        <div>
+          <p class="eyebrow">INTRANET OBJECT STORAGE</p>
+          <h1>MinIO 文件测试台</h1>
+          <p class="subtitle">上传文件、查看对象列表，并验证预览与下载流程。</p>
+        </div>
+        <div id="health" class="health health--checking" aria-live="polite">等待连接配置</div>
+      </header>
+
+      <section class="card connection-card" aria-labelledby="connection-title">
+        <div class="card-heading">
+          <div>
+            <p class="eyebrow">CONNECTION</p>
+            <h2 id="connection-title">实时连接参数</h2>
+          </div>
+          <button id="disconnect-button" class="button button--quiet" type="button" disabled>断开连接</button>
+        </div>
+
+        <form id="connection-form" class="connection-form">
+          <label>
+            <span>MinIO API 地址</span>
+            <input id="minio-endpoint" name="MINIO_ENDPOINT" type="url" value="http://192.168.31.129:9000" required />
+          </label>
+          <label>
+            <span>存储桶</span>
+            <input id="minio-bucket" name="MINIO_BUCKET" type="text" value="test-upload" required />
+          </label>
+          <label>
+            <span>Access Key</span>
+            <input id="minio-access-key" name="MINIO_ACCESS_KEY" type="text" autocomplete="off" required />
+          </label>
+          <label>
+            <span>Secret Key</span>
+            <input id="minio-secret-key" name="MINIO_SECRET_KEY" type="password" autocomplete="new-password" required />
+          </label>
+          <button id="connect-button" class="button button--primary" type="submit">连接 MinIO</button>
+        </form>
+        <p id="connection-status" class="connection-status" aria-live="polite">参数只保存在当前服务内存中，重启或一小时后自动失效。</p>
+      </section>
+
+      <section class="grid" aria-label="文件测试功能">
+        <section class="card upload-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">UPLOAD</p>
+              <h2>上传测试文件</h2>
+            </div>
+            <span class="limit">最大 50 MiB</span>
+          </div>
+
+          <label id="drop-zone" class="drop-zone" for="file-input">
+            <input id="file-input" type="file" multiple />
+            <span class="drop-icon" aria-hidden="true">↑</span>
+            <strong>拖放文件到这里</strong>
+            <span>或点击选择一个或多个文件</span>
+          </label>
+
+          <div id="selected-files" class="selected-files" hidden></div>
+          <button id="upload-button" class="button button--primary" type="button" disabled>开始上传</button>
+          <div id="upload-status" class="status" aria-live="polite"></div>
+          <div id="upload-result" class="upload-result" aria-live="polite"></div>
+        </section>
+
+        <section class="card files-card">
+          <div class="card-heading">
+            <div>
+              <p class="eyebrow">OBJECTS</p>
+              <h2>已上传文件</h2>
+            </div>
+            <button id="refresh-button" class="button button--quiet" type="button">刷新</button>
+          </div>
+          <div id="file-list" class="file-list" aria-live="polite">
+            <p class="empty-state">正在读取对象列表…</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <template id="file-template">
+      <article class="file-row">
+        <div class="file-badge" aria-hidden="true">FILE</div>
+        <div class="file-details">
+          <strong class="file-name"></strong>
+          <span class="file-meta"></span>
+        </div>
+        <div class="file-actions">
+          <button class="file-preview" type="button">查看</button>
+          <a class="file-download">下载</a>
+        </div>
+      </article>
+    </template>
+
+    <dialog id="media-viewer" class="media-viewer">
+      <form method="dialog" class="viewer-toolbar">
+        <strong id="viewer-title">文件查看</strong>
+        <button class="viewer-close" aria-label="关闭查看器">×</button>
+      </form>
+      <div class="viewer-body">
+        <img id="viewer-image" hidden alt="图片预览" />
+        <video id="viewer-video" hidden controls preload="metadata"></video>
+        <p id="viewer-loading" class="viewer-loading" hidden>正在准备预览…</p>
+        <p id="viewer-message" class="viewer-message" hidden></p>
+      </div>
+      <a id="viewer-download" class="button button--quiet" download>下载文件</a>
+    </dialog>
+
+    <script src="/media.js"></script>
+    <script src="/upload-queue.js"></script>
+    <script src="/app.js"></script>
+  </body>
+</html>
